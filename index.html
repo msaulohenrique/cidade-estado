@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>API IBGE - Cidade e Estado </title>
+  </head>
+  <body>
+	<div class="container">
+		<h1>API IBGE - Cidade e Estado </h1>
+		
+		<form>
+			<div class="form-group">
+				<label for="estados">Estado:</label>
+				<select id="estados" class="form-control"><option selected>--</option></select>
+			</div>
+			<div class="form-group">
+				<label for="cidades">Cidade:</label>
+				<select id="cidades" class="form-control"><option selected>--</option></select>
+			</div>
+		</form>
+	</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	
+	<script>
+	//esta função do ajax é lida no carregamento da pagina
+$(function () {  
+  
+  //este ajax faz o acesso 
+  $.ajax({
+		url: 'https://servicodados.ibge.gov.br/api/v1/localidades/estados/',
+		type: 'GET',
+	})
+	.done(function(data) {
+		console.log(data);
+			//data é o retorno da api    
+		//esse for percorre todo o retorno e pega o nome do obj   
+		for(i = 0; i < data.length; i++){
+		
+		 //esta função está sendo usada para adicionar um elemento option em seu select e os valores deles são os dados retornados da api
+		 $("#estados").append("<option data-id='"+data[i].id+"' id='"+data[i].sigla+"'> "+data[i].nome+"</option>");
+		}
+    
+	});
+	
+	$("#estados").change(function () {
+		$('#cidades option:first-child').attr("selected", "selected");
+		$.ajax({
+		url: 'https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+$(this).find(':selected').data('id')+'/municipios',
+		type: 'GET',
+		beforeSend: function() {
+			$("#cidades").addClass("disabled");
+		},
+		success: function(data){
+			$("#cidades").html(data);
+			$('#cidades').find('option[value]').remove();
+			$("#cidades").removeClass("disabled");
+		}
+		}) 
+		.done(function(data) {
+			console.log(data);
+				//data é o retorno da api    
+			//esse for percorre todo o retorno e pega o nome do obj   
+			for(i = 0; i < data.length; i++){
+			
+				 //esta função está sendo usada para adicionar um elemento option em seu select e os valores deles são os dados retornados da api
+				 $("#cidades").append("<option id='"+data[i].nome+"'> "+data[i].nome+"</option>");
+			}
+		
+		});
+	 
+	});
+  
+});
+	</script> 
+  </body>
+</html>

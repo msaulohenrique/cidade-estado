@@ -4,8 +4,7 @@ $path = './api';
     $filePath = $path .'/'. $filename;
 
     if(file_exists($filePath)) {
-        $content = json_decode(file_get_contents($filePath), true);
-        return $content;
+        unlink($filePath);
     }
 
     $somenteEssesEstados = ['TO', 'SP'];

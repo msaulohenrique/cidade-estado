@@ -7,7 +7,7 @@ $path = './api';
         unlink($filePath);
     }
 
-    $somenteEssesEstados = ['TO', 'SP'];
+    $somenteEssesEstados = ['TO', 'SP']; // Liste por sigla os estados que quer listar no json
 
     $estados = json_decode(file_get_contents('https://servicodados.ibge.gov.br/api/v1/localidades/estados'));
 
